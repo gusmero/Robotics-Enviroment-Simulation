@@ -5,7 +5,7 @@
 Il codice dovrà calcolare la trasformazione one-period per ogni passo (combinando le "trasformazioni elementari") e quella globale per disegnare il robot nella nuova pose, senza cancellare il disegno precedente. Successivamente all'ultimo disegno dovrà stampare a video l'ultimo valore dei gradi di libertà. Il codice opererà partendo dagli archi (archi.m).
 
 
-[Robot track](images/ES_1.JPG)
+![Robot track](images/ES_1.JPG)
 
 ## File 2
 Il .m da sviluppare dovrà chiedere all'utente:
