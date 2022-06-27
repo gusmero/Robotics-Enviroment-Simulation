@@ -2,10 +2,55 @@
 
 
 ## File 1
-Il codice dovrà calcolare la trasformazione one-period per ogni passo (combinando le "trasformazioni elementari") e quella globale per disegnare il robot nella nuova pose, senza cancellare il disegno precedente. Successivamente all'ultimo disegno dovrà stampare a video l'ultimo valore dei gradi di libertà. Il codice opererà partendo dagli archi (archi.m).
+
+
+The code will have to show the trajectory performed over time by a robot equipped with tires on two-dimensional space.
+The calculation of the position at the new time t + 1 is performed through a one-period transformation (combining the elementary transformations) with respect to the previous position.
+The transformations are based on a file Archi_percorsi containing the readings of a motion encoder and the initial position of the robot into the file Positions.
+Finally, the algorithm prints the degrees of freedom with respect to the origin on the screen.
+
+
+```m
+ Posizione : 
+X : 20.836149 
+Y : 4.677796 
+
+Orientamento : 
+theta : 119.357726Â°
+```
+
+```m
+%analizzziamo scandendo il veddore delle acquisizione dell'encoder al tempo t=j  
+for j=1:size(ssx,2)
+    %se gli archi hanno la stessa dimensione il robot si muoverà dritto in
+    %direzione dell'asse delle x , altrimenti ruterà
+    if ssx(j)==sdx(j)
+        r0Tr1=[1 0 sdx(j); 0 1 0; 0 0 1];
+    else
+        d = sdx(j)*b / (ssx(j)-sdx(j));
+        deltaT = (ssx(j)-sdx(j))/b; %calcolo dell'angolo di rotazione
+        mER = [ cos(deltaT) -sin(deltaT) ; sin(deltaT) cos(deltaT)];%matrice di rotazione elementare
+        transition=[0 d+b/2];
+        OT1 = [eye(2,2) -transition' ; 0 0 1 ];%trasformazione omogenea che descrive il frame in CIR t-1 rispetto a t-1
+        OT2 = [ mER' zeros(2,1); 0 0 1];%trasformazione omogenea che descrive il frame CIR T rispetto al frame CIR t-1 ; mER'(deltaT)=mER(-delta)
+        OT3 = [eye(2,2) transition' ; 0 0 1];%trasformazione omogenea che descrive il frame T rispetto al frame CIR t
+        r0Tr1=OT1*OT2*OT3; %one_period_trasform  trasformazione omogenea 
+    end
+    
+    wTr1 = wTr0 * r0Tr1; % aggiorniamo la trasformata omogenea che descrive il frame t rispetto al mondo moltiplicando wtr0 e roTr1(trasformata omogenea che descrive il frame t rispetto al frame t-1)
+    newPose= wTr1 * Points; % moltiplichiamo i punti del robot per la trasformazione omogena wTr1 che trasforma i punti nella pose al tempo t
+    wTr0 = wTr1; % assegno a wTr0 la nuova trasformata omogenea per ottenere il frame t-1 rispetto al mondo
+    
+```
+
+
 
 
 ![Robot track](images/ES_1.JPG)
+
+
+
+
 
 ## File 2
 Il .m da sviluppare dovrà chiedere all'utente:
